@@ -1,7 +1,3 @@
--- Create database if not exists
-CREATE DATABASE IF NOT EXISTS college_course_reg;
-USE college_course_reg;
-
 -- Drop tables if they exist to start fresh
 DROP TABLE IF EXISTS waitlist;
 DROP TABLE IF EXISTS completed_courses;

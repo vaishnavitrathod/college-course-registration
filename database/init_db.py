@@ -10,7 +10,7 @@ def init_db():
     print("Connecting to MySQL server...")
     try:
         # Connect without specifying database to run creation script
-        conn = get_db_connection(include_db=False)
+        conn = get_db_connection(include_db=True)
         cursor = conn.cursor()
     except Exception as e:
         print(f"Error connecting to MySQL: {e}")
