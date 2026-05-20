@@ -890,10 +890,11 @@ def chatbot_message():
     db, cursor = get_db()
     try:
         # 1. Fetch Student Profile
-        cursor.execute("SELECT name, email, department FROM students WHERE student_id = %s", (student_id,))
+        cursor.execute("SELECT name, email, department, current_semester FROM students WHERE student_id = %s", (student_id,))
         student = cursor.fetchone()
         student_name = student['name']
         student_dept = student['department']
+        student_semester = student['current_semester']
         
         # 2. Fetch Active Enrollment Course List
         cursor.execute("""
@@ -912,10 +913,22 @@ def chatbot_message():
         gpa, completed_credits = calculate_gpa(completed)
         completed_courses_str = "; ".join([f"{c['course_code']} ({c['title']}, {c['credits']} cr, Grade: {c['grade']} in {c['semester']})" for c in completed]) if completed else "None"
         
-        # 4. Fetch University Catalog List
-        cursor.execute("SELECT course_code, title, department, credits, instructor, enrolled_count, capacity FROM courses")
+        # 4. Fetch University Catalog List (Filtered by student's current semester and department to keep prompt small)
+        cursor.execute("""
+            SELECT course_code, title, department, credits, instructor, enrolled_count, capacity, semester
+            FROM courses
+            WHERE semester = %s AND (department = %s OR department IN ('Mathematics', 'Physics'))
+        """, (student_semester, student_dept))
         catalog = cursor.fetchall()
-        catalog_str = "\n".join([f"- {c['course_code']}: {c['title']} ({c['department']}, {c['credits']} cr) - Instructor: {c['instructor']}, Seats: {c['enrolled_count']}/{c['capacity']}" for c in catalog])
+        if not catalog:
+            cursor.execute("""
+                SELECT course_code, title, department, credits, instructor, enrolled_count, capacity, semester
+                FROM courses
+                WHERE department = %s OR department IN ('Mathematics', 'Physics')
+            """, (student_dept,))
+            catalog = cursor.fetchall()
+            
+        catalog_str = "\n".join([f"- {c['course_code']}: {c['title']} ({c['credits']} cr) - Seats: {c['enrolled_count']}/{c['capacity']}" for c in catalog])
 
         # 5. Build system instructions with live database variables
         system_prompt = f"""You are the Apex University Registration Assistant, a friendly and expert AI academic counselor.
@@ -924,13 +937,14 @@ You must help the student with course recommendations, eligibility checks, polic
 Student Profile:
 - Name: {student_name}
 - Department: {student_dept}
+- Current Semester: Semester {student_semester}
 - Current Semester Registrations: {active_courses_str}
 - Current Semester Credit Load: {current_credits} / 20 credits max limit
 - Academic History: {completed_courses_str}
 - Cumulative CGPA: {gpa:.2f} / 10.0 (Indian Standard Scale)
 - Total Completed Credits: {completed_credits}
 
-Available Course Catalog:
+Available Course Catalog for Current Semester:
 {catalog_str}
 
 Important Registration Policies:
@@ -948,7 +962,6 @@ Guidelines for your replies:
 
         # 6. Session conversation history loader
         chat_history = session.get('chat_history', [])
-        # Ensure we only keep the last 10 dialog turns to avoid exceeding context
         chat_history = chat_history[-10:]
 
         payload = {
@@ -967,24 +980,59 @@ Guidelines for your replies:
             "Connection": "close",
             "Content-Type": "application/json"
         }
-        for attempt in range(3):
+        
+        # Try calling the external API with retries and a moderate timeout
+        for attempt in range(2):
             try:
-                res = requests.post("https://text.pollinations.ai/", json=payload, headers=headers, timeout=30)
-                if res.status_code == 200:
-                    reply = res.text.strip()
-                    break
-                elif res.status_code == 429:
-                    time.sleep(1.5 * (attempt + 1))
-                    continue
-                else:
-                    reply = f"I'm sorry, I am having trouble connecting to my brain right now (Error {res.status_code}). Please try again."
-                    break
-            except requests.RequestException:
+                res = requests.post("https://text.pollinations.ai/", json=payload, headers=headers, timeout=12)
+                if res.status_code == 200 and res.text.strip():
+                    # Double check it is not a JSON error response like disk full
+                    resp_text = res.text.strip()
+                    if "ENOSPC" not in resp_text and "error" not in resp_text.lower():
+                        reply = resp_text
+                        break
+                time.sleep(1.0)
+            except Exception:
                 time.sleep(1.0)
                 continue
         
+        # 7. Smart rule-based fallback if the API is down/rate-limited/timing out
         if not reply:
-            reply = "I encountered a connection timeout. Please verify your network connection and try again."
+            msg_lower = message.lower()
+            # Greetings
+            if any(greet in msg_lower for greet in ['hello', 'hi', 'hey', 'greetings', 'yo']):
+                reply = f"Hello {student_name}! 👋 I am your Apex University Academic Assistant. How can I help you today?\n\nYou can ask me things like:\n- *\"What electives can I take?\"*\n- *\"Recommend a course\"*\n- *\"Calculate my CGPA\"*\n- *\"Remaining credits?\"*"
+            # CGPA pointer check
+            elif any(term in msg_lower for term in ['cgpa', 'gpa', 'grades', 'grade', 'pointer', 'marks']):
+                completed_list = "\n".join([f"- **{c['course_code']}**: {c['title']} ({c['credits']} cr, Grade: {c['grade']})" for c in completed]) if completed else "No completed courses on record."
+                reply = f"### 📊 Academic Performance & CGPA\n\nHi **{student_name}**, here is your current academic performance summary:\n- **Cumulative CGPA**: `{gpa:.2f} / 10.0`\n- **Total Completed Credits**: `{completed_credits} credits`\n\n**Completed Course History:**\n{completed_list}"
+            # Credit loads
+            elif any(term in msg_lower for term in ['credit', 'credits', 'limit', 'load', 'max']):
+                rem = 20 - current_credits
+                active_list = "\n".join([f"- **{c['course_code']}**: {c['title']} ({c['credits']} cr)" for c in active_courses]) if active_courses else "No active course registrations."
+                reply = f"### 💳 Credit Load Status (Semester {student_semester})\n\n- **Current registered credits**: `{current_credits} / 20 credits maximum limit`\n- **Remaining available credits**: `{rem} credits`\n\n**Currently Registered Courses:**\n{active_list}"
+            # Elective inquiries
+            elif 'elective' in msg_lower:
+                electives = [c for c in catalog if 'elective' in c['title'].lower() or c.get('type') == 'Elective']
+                if electives:
+                    electives_list = "\n".join([f"- **{e['course_code']}**: {e['title']} ({e['credits']} cr) - Semester {e.get('semester', student_semester)}" for e in electives])
+                    reply = f"### 🎓 Elective Recommendations (Semester {student_semester})\n\nBased on your curriculum, the following electives are available for you in **Semester {student_semester}**:\n\n{electives_list}\n\n*Note: Ensure your total registered credits do not exceed the 20-credit limit.*"
+                else:
+                    reply = f"Based on your curriculum, there are no specific electives listed for **Semester {student_semester}** of the {student_dept} department. You can check the Explore Catalog for open electives."
+            # Course recommendations
+            elif any(term in msg_lower for term in ['recommend', 'recommendation', 'recommendations', 'best course', 'best courses', 'suggest']):
+                active_codes = {c['course_code'] for c in active_courses}
+                completed_codes = {c['course_code'] for c in completed}
+                recs = [c for c in catalog if c['course_code'] not in active_codes and c['course_code'] not in completed_codes]
+                if recs:
+                    recs_list = "\n".join([f"- **{r['course_code']}**: {r['title']} ({r['credits']} cr) | Seats: {r['enrolled_count']}/{r['capacity']}" for r in recs[:4]])
+                    reply = f"### 💡 Course Recommendations for Semester {student_semester}\n\nHi **{student_name}**, based on your department (**{student_dept}**) and current semester (**Semester {student_semester}**), I recommend these courses:\n\n{recs_list}\n\n*Click **Register Course** in the Explore Catalog to enroll.*"
+                else:
+                    reply = f"You are already registered for all available courses in **Semester {student_semester}**! If you want more courses, you can update your semester in My Profile to view courses for the next semester."
+            # Catch-all rule-based response
+            else:
+                active_str = ", ".join([c['course_code'] for c in active_courses]) if active_courses else "None"
+                reply = f"### 🤖 Academic Assistant (Help Mode)\n\nHello **{student_name}**! I'm currently running in helper mode to assist you directly from database records:\n\n- **Program/Major**: `{student_dept}`\n- **Current Semester**: `Semester {student_semester}`\n- **Active Registrations**: `{active_str}`\n- **Credit Load**: `{current_credits} / 20 credits maximum limit`\n- **Completed Credits**: `{completed_credits} credits`\n- **Cumulative CGPA**: `{gpa:.2f} / 10.0`\n\nHow can I help you today? You can ask me about **electives**, **CGPA/grades**, **credit limits**, or request **course recommendations**."
 
         # Save dialog turn to session history
         chat_history.append({"role": "user", "content": message})
