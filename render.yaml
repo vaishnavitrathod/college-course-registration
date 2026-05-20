@@ -12,7 +12,7 @@ services:
       - key: DB_USER
         value: avnadmin
       - key: DB_PASSWORD
-        value: AVNS_Xlca-Yxcb1iFMSbR-_4
+        value: REPLACE_ON_RENDER
       - key: DB_NAME
         value: defaultdb
       - key: DB_SSL_CA
