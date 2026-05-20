@@ -11,11 +11,12 @@ load_dotenv(override=True)
 
 # Initialize Flask app
 # Serve frontend files statically from the ../frontend directory
-app = Flask(__name__, 
-            static_folder='../frontend', 
-            static_url_path='', 
-            template_folder='../frontend')
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+app = Flask(__name__, 
+            static_folder=os.path.join(BASE_DIR, 'frontend'), 
+            static_url_path='', 
+            template_folder=os.path.join(BASE_DIR, 'frontend'))
 app.secret_key = os.getenv('SECRET_KEY', 'college_course_reg_secret_key_12345')
 
 # Tear down database connections automatically after requests
