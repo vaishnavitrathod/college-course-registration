@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex University - Course Portal</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="dark-theme">
+    <!-- Background glow circles for glassmorphism -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-glow bg-glow-3"></div>
+
+    <!-- Notification Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- MAIN APP CONTAINER -->
+    <div id="app">
+        <!-- ================= AUTH VIEW ================= -->
+        <div id="auth-view" class="view active">
+            <div class="auth-container">
+                <!-- Left panel with promotional info -->
+                <div class="auth-info-panel">
+                    <div class="brand">
+                        <i class="fa-solid fa-graduation-cap brand-icon"></i>
+                        <span>Apex University</span>
+                    </div>
+                    <h1 class="auth-title">Shape Your Academic Future</h1>
+                    <p class="auth-subtitle">Welcome to the student course registration portal. Choose from our world-class departments, manage your credits, and curate your personalized schedule with ease.</p>
+                    
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <div class="feature-icon"><i class="fa-solid fa-bolt"></i></div>
+                            <div>
+                                <h4>Instant Enrollment</h4>
+                                <p>Register or drop courses in real-time with automatic seat tracking.</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon"><i class="fa-solid fa-gauge-high"></i></div>
+                            <div>
+                                <h4>Credit Cap Safety</h4>
+                                <p>System limits help you stay within a safe 20-credit load per semester.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right panel containing forms -->
+                <div class="auth-form-panel">
+                    <!-- Login Form Card -->
+                    <div id="login-card" class="auth-card active">
+                        <h2>Welcome Back</h2>
+                        <p class="card-subtitle">Log in to manage your registrations</p>
+                        
+                        <form id="login-form">
+                            <div class="form-group">
+                                <label for="login-email">Email Address</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-regular fa-envelope input-icon"></i>
+                                    <input type="email" id="login-email" required placeholder="you@university.edu">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="login-password">Password</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-solid fa-lock input-icon"></i>
+                                    <input type="password" id="login-password" required placeholder="••••••••">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <span>Log In</span> <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </form>
+                        
+                        <p class="auth-switch-text">
+                            Don't have an account? <a href="#" id="to-register-btn">Create one now</a>
+                        </p>
+                    </div>
+
+                    <!-- Register Form Card -->
+                    <div id="register-card" class="auth-card">
+                        <h2>Create Account</h2>
+                        <p class="card-subtitle">Sign up to begin registering for courses</p>
+                        
+                        <form id="register-form">
+                            <div class="form-group">
+                                <label for="reg-name">Full Name</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-regular fa-user input-icon"></i>
+                                    <input type="text" id="reg-name" required placeholder="John Doe">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="reg-email">Email Address</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-regular fa-envelope input-icon"></i>
+                                    <input type="email" id="reg-email" required placeholder="name@university.edu">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="reg-dept">Academic Department</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-solid fa-building-columns input-icon"></i>
+                                    <select id="reg-dept" required>
+                                        <option value="" disabled selected>Select Department</option>
+                                        <option value="Computer Science">Computer Science</option>
+                                        <option value="Mathematics">Mathematics</option>
+                                        <option value="Physics">Physics</option>
+                                        <option value="Electrical Engineering">Electrical Engineering</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="reg-password">Password</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-solid fa-lock input-icon"></i>
+                                    <input type="password" id="reg-password" required placeholder="Min 6 characters">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <span>Sign Up</span> <i class="fa-solid fa-user-plus"></i>
+                            </button>
+                        </form>
+                        
+                        <p class="auth-switch-text">
+                            Already have an account? <a href="#" id="to-login-btn">Log in instead</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= DASHBOARD VIEW ================= -->
+        <div id="dashboard-view" class="view">
+            <!-- Navigation Header -->
+            <header class="navbar">
+                <div class="nav-left">
+                    <div class="brand">
+                        <i class="fa-solid fa-graduation-cap brand-icon"></i>
+                        <span>Apex Portal</span>
+                    </div>
+                    
+                    <nav class="nav-tabs">
+                        <button class="nav-tab active" data-target="catalog-tab">
+                            <i class="fa-solid fa-book-open"></i> Explore Catalog
+                        </button>
+                        <button class="nav-tab" data-target="chatbot-tab">
+                            <i class="fa-solid fa-robot"></i> AI Assistant
+                        </button>
+                        <button class="nav-tab" data-target="profile-tab">
+                            <i class="fa-solid fa-user-circle"></i> My Profile
+                        </button>
+                        <button class="nav-tab" data-target="degree-plan-tab">
+                            <i class="fa-solid fa-graduation-cap"></i> Degree Planner
+                        </button>
+                    </nav>
+                </div>
+                
+                <div class="nav-right">
+                    <!-- Smooth Light/Dark mode toggler -->
+                    <button id="theme-toggle-btn" class="btn btn-icon-only theme-toggle" title="Toggle Light/Dark Theme">
+                        <i class="fa-solid fa-moon moon-icon"></i>
+                        <i class="fa-solid fa-sun sun-icon"></i>
+                    </button>
+                    
+                    <div class="user-profile-badge" id="nav-profile-badge">
+                        <img id="user-avatar-img" class="user-avatar-img hidden" src="" alt="Avatar">
+                        <div class="user-avatar" id="avatar-letters">JD</div>
+                        <div class="user-info">
+                            <span class="user-name" id="user-display-name">John Doe</span>
+                            <span class="user-dept" id="user-display-dept">Computer Science</span>
+                        </div>
+                    </div>
+                    
+                    <button id="logout-btn" class="btn btn-icon-only" title="Logout">
+                        <i class="fa-solid fa-power-off"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Subheader Summary Cards -->
+            <div class="dashboard-summary">
+                <div class="stat-card">
+                    <div class="stat-icon icon-credits">
+                        <i class="fa-solid fa-book-bookmark"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Registered Credits</span>
+                        <div class="stat-value-group">
+                            <span class="stat-value" id="stat-credits">0</span>
+                            <span class="stat-limit">/ 20 credits max</span>
+                        </div>
+                        <!-- Progress bar -->
+                        <div class="progress-bar-container">
+                            <div id="credits-progress-bar" class="progress-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card animate-on-load">
+                    <div class="stat-icon icon-gpa">
+                        <i class="fa-solid fa-award"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Cumulative CGPA</span>
+                        <span class="stat-value" id="stat-gpa">8.45</span>
+                    </div>
+                </div>
+
+                <div class="stat-card animate-on-load">
+                    <div class="stat-icon icon-completed">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Completed Credits</span>
+                        <span class="stat-value" id="stat-completed-credits">11</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon icon-dept">
+                        <i class="fa-solid fa-network-wired"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Primary Major</span>
+                        <span class="stat-value text-truncate" id="stat-department">Computer Science</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Dashboard Area Content Blocks -->
+            <div class="dashboard-tab-content-container">
+                
+                <!-- ================= TAB 1: CATALOG TAB ================= -->
+                <div id="catalog-tab" class="tab-panel active">
+                    
+                    <!-- Course Recommendations -->
+                    <div class="recommender-section" id="recommender-section">
+                        <div class="recommender-header">
+                            <h3><i class="fa-solid fa-wand-magic-sparkles recommender-icon"></i> Recommended For You</h3>
+                            <p>Courses suggested by our academic algorithm aligned with your major and remaining credits.</p>
+                        </div>
+                        <div class="recommender-grid" id="recommender-grid">
+                            <!-- Dynamically loaded suggestions -->
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <!-- Course Explorer (Left Panel) -->
+                        <main class="course-explorer-panel">
+                            <div class="panel-header">
+                                <h2>Explore Available Courses</h2>
+                                <p>Browse courses, check availability, and enroll instantly.</p>
+                            </div>
+
+                            <!-- Search and Filters -->
+                            <div class="filter-controls">
+                                <div class="search-box">
+                                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                                    <input type="text" id="course-search-input" placeholder="Search by code, title, or instructor...">
+                                </div>
+
+                                <div class="filters-row">
+                                    <div class="dept-tabs" id="dept-filter-tabs">
+                                        <button class="filter-tab active" data-dept="">All Departments</button>
+                                        <button class="filter-tab" data-dept="Computer Science">Computer Science</button>
+                                        <button class="filter-tab" data-dept="Artificial Intelligence">Artificial Intelligence</button>
+                                        <button class="filter-tab" data-dept="Mathematics">Mathematics</button>
+                                        <button class="filter-tab" data-dept="Physics">Physics</button>
+                                        <button class="filter-tab" data-dept="Civil Engineering">Civil Engineering</button>
+                                        <button class="filter-tab" data-dept="Mechanical Engineering">Mechanical Engineering</button>
+                                    </div>
+                                    
+                                    <div class="semester-filter-wrapper" style="display: flex; align-items: center; gap: 8px;">
+                                        <label for="course-semester-filter" style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); white-space: nowrap;">Semester:</label>
+                                        <select id="course-semester-filter" style="background: var(--bg-card); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 12px; font-family: inherit; font-size: 0.85rem; cursor: pointer; outline: none; transition: border-color 0.2s ease;">
+                                            <option value="">All Semesters</option>
+                                            <option value="1">Semester 1</option>
+                                            <option value="2">Semester 2</option>
+                                            <option value="3">Semester 3</option>
+                                            <option value="4">Semester 4</option>
+                                            <option value="5">Semester 5</option>
+                                            <option value="6">Semester 6</option>
+                                            <option value="7">Semester 7</option>
+                                            <option value="8">Semester 8</option>
+                                        </select>
+                                    </div>
+
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="available-only-checkbox">
+                                        <span class="checkmark"></span>
+                                        Show Open Classes Only
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Course Catalog Grid -->
+                            <div class="course-list-container">
+                                <div id="course-grid" class="course-grid">
+                                    <div class="loading-spinner-wrapper">
+                                        <div class="spinner"></div>
+                                        <p>Loading courses...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </main>
+
+                        <!-- Registered Courses Sidebar (Right Panel) -->
+                        <aside class="schedule-sidebar">
+                            <div class="panel-header">
+                                <h2>My Registrations</h2>
+                                <p>Your current active schedule</p>
+                            </div>
+
+                            <div class="schedule-container">
+                                <div id="enrolled-list" class="enrolled-list">
+                                    <div class="empty-schedule">
+                                        <i class="fa-solid fa-calendar-xmark empty-icon"></i>
+                                        <h3>No classes registered yet</h3>
+                                        <p>Search the catalog and select "Register" to add courses to your schedule.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+
+                <!-- ================= TAB 2: CHATBOT TAB ================= -->
+                <div id="chatbot-tab" class="tab-panel">
+                    <div class="chatbot-container glass-card">
+                        <div class="chatbot-header">
+                            <div class="chatbot-title-info">
+                                <div class="bot-avatar-icon"><i class="fa-solid fa-robot"></i></div>
+                                <div>
+                                    <h3>Registration Assistant AI Chatbot</h3>
+                                    <span class="bot-status"><span class="status-dot"></span> Online &bull; Academic Assistant</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="chatbot-body" id="chat-messages-container">
+                            <div class="message bot-message animate-message">
+                                <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+                                <div class="msg-content">
+                                    <p>Hello! I am your AI Registration Assistant. Ask me anything about course eligibilities, department electives, cumulative CGPA, or remaining semester credit caps!</p>
+                                    <p>Type in commands directly, or select a quick question chip below to get started.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Action Suggestion Chips -->
+                        <div class="chat-chips-row">
+                            <button class="chat-chip" data-query="What electives can I take?">What electives can I take?</button>
+                            <button class="chat-chip" data-query="Can you recommend a course?">Recommend a course</button>
+                            <button class="chat-chip" data-query="What is my CGPA?">Calculate my CGPA</button>
+                            <button class="chat-chip" data-query="How many credits do I have left?">Remaining credits?</button>
+                        </div>
+                        
+                        <form id="chatbot-input-form" class="chatbot-input-area">
+                            <input type="text" id="chat-user-input" autocomplete="off" placeholder="Ask 'Am I eligible for CS-201?' or 'Suggest electives'...">
+                            <button type="submit" class="btn btn-primary btn-chat-send" id="chat-send-btn">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- ================= TAB 3: PROFILE TAB ================= -->
+                <div id="profile-tab" class="tab-panel">
+                    <div class="profile-layout-grid">
+                        
+                        <!-- Left Panel: Profile Detail Editor -->
+                        <div class="profile-editor-card glass-card">
+                            <div class="profile-photo-editor">
+                                <div class="profile-photo-wrapper" id="profile-photo-wrapper" title="Click to upload profile photo">
+                                    <img id="profile-avatar-img" class="profile-avatar-img hidden" src="" alt="Profile Image">
+                                    <div class="profile-avatar-placeholder" id="profile-avatar-placeholder">JD</div>
+                                    <div class="avatar-hover-overlay">
+                                        <i class="fa-solid fa-camera animate-pulse"></i>
+                                        <span>Change Photo</span>
+                                    </div>
+                                </div>
+                                <input type="file" id="profile-photo-input" accept="image/*" class="hidden">
+                            </div>
+                            
+                            <div class="profile-static-details">
+                                <h3 id="profile-student-name">John Doe</h3>
+                                <p class="profile-student-email" id="profile-student-email">john.doe@apex.edu</p>
+                                <div style="display: flex; gap: 8px; justify-content: center; margin-top: 8px; flex-wrap: wrap;">
+                                    <div class="profile-badge-dept" id="profile-student-dept">Computer Science</div>
+                                    <div class="profile-badge-dept" id="profile-student-semester" style="background: rgba(16, 185, 129, 0.08); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2);">Semester 1</div>
+                                </div>
+                            </div>
+                            
+                            <form id="profile-edit-form">
+                                <div class="form-group" style="margin-bottom: 15px;">
+                                    <label for="profile-name-input">Full Name</label>
+                                    <input type="text" id="profile-name-input" placeholder="Enter your full name" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 15px;">
+                                    <label for="profile-email-input">Email Address</label>
+                                    <input type="email" id="profile-email-input" placeholder="Enter your email address" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="profile-semester">Current Semester</label>
+                                    <select id="profile-semester" class="form-control" style="background: var(--bg-card); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; width: 100%; font-family: inherit; font-size: 0.95rem;">
+                                        <option value="1">Semester 1</option>
+                                        <option value="2">Semester 2</option>
+                                        <option value="3">Semester 3</option>
+                                        <option value="4">Semester 4</option>
+                                        <option value="5">Semester 5</option>
+                                        <option value="6">Semester 6</option>
+                                        <option value="7">Semester 7</option>
+                                        <option value="8">Semester 8</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="margin-top: 15px;">
+                                    <label for="profile-bio">Biography</label>
+                                    <textarea id="profile-bio" rows="4" placeholder="Tell us about yourself, academic interests, or career objectives..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block" style="margin-top: 15px;">
+                                    <i class="fa-solid fa-circle-check"></i> Update Profile
+                                </button>
+                            </form>
+
+                            <hr class="profile-divider">
+
+                            <div class="certificate-download-section">
+                                <h4>Academic Verification</h4>
+                                <p>Download your official, digitally-signed verification certificate for current semester enrollments.</p>
+                                <a id="btn-download-cert" href="/api/student/certificate" target="_blank" class="btn btn-outline btn-block btn-download-cert">
+                                    <i class="fa-solid fa-print"></i> Generate Certificate
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Academic History & Transcript -->
+                        <div class="profile-history-card glass-card">
+                            <div class="panel-header">
+                                <h2>Academic History & Completed Courses</h2>
+                                <p>Your historical record of completed terms, grades, and earned credits.</p>
+                            </div>
+
+                            <div class="history-gpa-overview">
+                                <div class="gpa-large-badge">
+                                    <span class="gpa-sub">Cumulative CGPA</span>
+                                    <span class="gpa-num" id="history-gpa-val">0.00</span>
+                                </div>
+                                <div class="credits-large-badge">
+                                    <span class="credits-sub">Completed Credits</span>
+                                    <span class="credits-num" id="history-credits-completed">0</span>
+                                </div>
+                            </div>
+
+                            <div class="history-table-container">
+                                <h3>Official Transcript</h3>
+                                <table class="academic-history-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Semester</th>
+                                            <th>Course Code</th>
+                                            <th>Title</th>
+                                            <th style="text-align:center;">Credits</th>
+                                            <th style="text-align:center;">Grade</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="completed-courses-tbody">
+                                        <!-- Completed rows populated dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- ================= TAB 4: DEGREE PLANNER TAB ================= -->
+                <div id="degree-plan-tab" class="tab-panel">
+                    <div class="degree-plan-header glass-card animate-on-load" style="margin-bottom: 25px; padding: 25px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                            <div>
+                                <h2 style="margin: 0; font-size: 1.8rem; font-weight: 700; color: var(--text-color);">B.Tech Degree Course Planner</h2>
+                                <p style="margin: 5px 0 0 0; color: var(--text-secondary); font-size: 0.95rem;">Track your semester-by-semester academic path and remaining credit requirements.</p>
+                            </div>
+                            
+                            <!-- Department Selector -->
+                            <div class="form-group" style="margin: 0; min-width: 260px;">
+                                <label for="degree-dept-select" style="font-weight: 600; font-size: 0.85rem; margin-bottom: 6px;">Select B.Tech Specialization</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-solid fa-graduation-cap input-icon"></i>
+                                    <select id="degree-dept-select" class="form-control" style="padding-left: 38px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-color);">
+                                        <option value="Computer Science">Computer Science & Engineering</option>
+                                        <option value="AI/ML">Artificial Intelligence & ML</option>
+                                        <option value="Civil Engineering">Civil Engineering</option>
+                                        <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Progress Summary -->
+                        <div class="degree-progress-container" style="margin-top: 25px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 20px; align-items: center;">
+                            <div class="glass-card" style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; font-weight: 600;">
+                                    <span>B.Tech Graduation Progress</span>
+                                    <span id="degree-progress-percent">0%</span>
+                                </div>
+                                <div class="progress-bar-container" style="background: rgba(0,0,0,0.2); border-radius: 8px; height: 12px; overflow: hidden; position: relative;">
+                                    <div id="degree-progress-bar" style="background: linear-gradient(90deg, #10b981, #06b6d4); width: 0%; height: 100%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 0.8rem; color: var(--text-secondary);">
+                                    <span id="degree-credits-completed-text">0 credits completed</span>
+                                    <span>Goal: 160 Credits</span>
+                                </div>
+                            </div>
+                            <div style="text-align: center; padding: 10px; background: rgba(16, 185, 129, 0.08); border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.15);">
+                                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #10b981; font-weight: 700; display: block; margin-bottom: 2px;">Completed</span>
+                                <span id="degree-completed-count" style="font-size: 1.8rem; font-weight: 800; color: #10b981; line-height: 1.2;">0</span>
+                                <span style="font-size: 0.75rem; color: var(--text-secondary); display: block;">courses done</span>
+                            </div>
+                            <div style="text-align: center; padding: 10px; background: rgba(99, 102, 241, 0.08); border-radius: 12px; border: 1px solid rgba(99, 102, 241, 0.15);">
+                                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6366f1; font-weight: 700; display: block; margin-bottom: 2px;">Enrolled</span>
+                                <span id="degree-enrolled-count" style="font-size: 1.8rem; font-weight: 800; color: #6366f1; line-height: 1.2;">0</span>
+                                <span style="font-size: 0.75rem; color: var(--text-secondary); display: block;">active courses</span>
+                            </div>
+                            <div style="text-align: center; padding: 10px; background: rgba(245, 158, 11, 0.08); border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.15);">
+                                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #f59e0b; font-weight: 700; display: block; margin-bottom: 2px;">Planned</span>
+                                <span id="degree-planned-count" style="font-size: 1.8rem; font-weight: 800; color: #f59e0b; line-height: 1.2;">0</span>
+                                <span style="font-size: 0.75rem; color: var(--text-secondary); display: block;">courses remaining</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Credit Distribution and Waitlist section -->
+                    <div class="degree-charts-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; margin-top: 25px;">
+                        <!-- Credit Donut Chart -->
+                        <div class="glass-card" style="padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 300px;">
+                            <h3 style="margin-top: 0; margin-bottom: 15px; color: var(--text-color); font-size: 1.1rem; width: 100%; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                                <i class="fa-solid fa-chart-pie" style="color: var(--primary);"></i> Credit Distribution Category
+                            </h3>
+                            <div style="position: relative; width: 180px; height: 180px; margin: 10px 0;">
+                                <canvas id="credit-distribution-chart"></canvas>
+                            </div>
+                            <div id="credit-chart-legend" style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 15px; font-size: 0.85rem; color: var(--text-secondary); font-weight: 550;">
+                                <!-- Legend values dynamically updated -->
+                            </div>
+                        </div>
+
+                        <!-- Waitlist Queue/Wishlist -->
+                        <div class="glass-card" style="padding: 20px; display: flex; flex-direction: column; min-height: 300px;">
+                            <h3 style="margin-top: 0; margin-bottom: 15px; color: var(--text-color); font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                                <i class="fa-solid fa-clock-rotate-left" style="color: var(--secondary);"></i> My Waitlist / Wishlist Queue
+                            </h3>
+                            <div id="waitlist-container" style="flex: 1; overflow-y: auto; max-height: 240px; display: flex; flex-direction: column; gap: 10px;">
+                                <div style="text-align: center; color: var(--text-secondary); margin-top: 50px; font-size: 0.95rem;">
+                                    <i class="fa-regular fa-folder-open" style="font-size: 2rem; margin-bottom: 10px; display: block; opacity: 0.5;"></i>
+                                    No waitlisted courses.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Semester Course Plan Grid -->
+                    <div id="degree-semesters-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px;">
+                        <!-- Semester cards injected dynamically -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js CDN for Credit Distribution Chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Application Javascript -->
+    <script src="/js/app.js"></script>
+</body>
+</html>
