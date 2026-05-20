@@ -7,7 +7,7 @@ import mysql.connector
 # Import db config functions
 from db_config import get_db, close_db
 
-load_dotenv()
+load_dotenv(override=True)
 
 # Initialize Flask app
 # Serve frontend files statically from the ../frontend directory
