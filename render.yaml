@@ -14,7 +14,7 @@ services:
       - key: DB_PASSWORD
         value: REPLACE_ON_RENDER
       - key: DB_NAME
-        value: defaultdb
+        value: college_course_reg
       - key: DB_SSL_CA
         value: ca.pem
       - key: SECRET_KEY
