@@ -932,7 +932,7 @@ def chatbot_message():
         catalog_str = "\n".join([f"- {c['course_code']}: {c['title']} ({c['credits']} cr) - Seats: {c['enrolled_count']}/{c['capacity']}" for c in catalog])
 
         # 5. Build system instructions with live database variables
-        system_prompt = f"""You are the Apex University Registration Assistant, a friendly and expert AI academic counselor.
+        system_prompt = f"""You are the Silveroak University Registration Assistant, a friendly and expert AI academic counselor.
 You must help the student with course recommendations, eligibility checks, policies, and general questions.
 
 Student Profile:
@@ -1002,7 +1002,7 @@ Guidelines for your replies:
             msg_lower = message.lower()
             # Greetings
             if any(greet in msg_lower for greet in ['hello', 'hi', 'hey', 'greetings', 'yo']):
-                reply = f"Hello {student_name}! 👋 I am your Apex University Academic Assistant. How can I help you today?\n\nYou can ask me things like:\n- *\"What electives can I take?\"*\n- *\"Recommend a course\"*\n- *\"Calculate my CGPA\"*\n- *\"Remaining credits?\"*"
+                reply = f"Hello {student_name}! 👋 I am your Silveroak University Academic Assistant. How can I help you today?\n\nYou can ask me things like:\n- *\"What electives can I take?\"*\n- *\"Recommend a course\"*\n- *\"Calculate my CGPA\"*\n- *\"Remaining credits?\"*"
             # CGPA pointer check
             elif any(term in msg_lower for term in ['cgpa', 'gpa', 'grades', 'grade', 'pointer', 'marks']):
                 completed_list = "\n".join([f"- **{c['course_code']}**: {c['title']} ({c['credits']} cr, Grade: {c['grade']})" for c in completed]) if completed else "No completed courses on record."
@@ -1248,7 +1248,7 @@ def get_certificate():
     <div>
         <div class="certificate-border">
             <div class="cert-header">
-                <h1 class="university-logo">APEX UNIVERSITY</h1>
+                <h1 class="university-logo">SILVEROAK UNIVERSITY</h1>
                 <div class="cert-subtitle">Office of the Registrar</div>
             </div>
             
@@ -1284,7 +1284,7 @@ def get_certificate():
                     <div class="signature-line">
                         <span style="font-family:'Cinzel', serif; font-style:italic; font-size:1.1rem; color:#1e293b; display:block; margin-bottom:-4px;">A. Turing</span>
                         Registrar Director
-                        <div class="dean-title">Apex Registrar Services</div>
+                        <div class="dean-title">Silveroak Registrar Services</div>
                     </div>
                 </div>
                 

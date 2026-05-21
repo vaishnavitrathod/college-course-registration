@@ -12,7 +12,7 @@ session = requests.Session()
 print("\n--- Test 1: Registering new student ---")
 register_payload = {
     "name": "Jane Smith",
-    "email": "jane.smith@apex.edu",
+    "email": "jane.smith@silveroak.edu",
     "password": "password123",
     "department": "Computer Science"
 }
@@ -31,7 +31,7 @@ if res.status_code not in [201, 409]:
 if res.status_code == 409:
     print("\nAccount already exists. Logging in...")
     login_payload = {
-        "email": "jane.smith@apex.edu",
+        "email": "jane.smith@silveroak.edu",
         "password": "password123"
     }
     res = session.post(f"{BASE_URL}/api/auth/login", json=login_payload)
@@ -82,30 +82,21 @@ print(res.json())
 assert res.status_code == 409, "Should fail with duplicate block (409)"
 
 # 6. Check credit limit by enrolling in many courses
-# CS-101 (4), CS-201 (4), CS-301 (4), CS-401 (4) = 16 credits.
-# Adding PHYS-101 (4) would be 20 credits (limit is 18).
-print("\n--- Test 6: Enrolling up to credit limit (18 cr) ---")
-for code in ['CS-201', 'CS-301', 'CS-401']:
+# CS-101 (4), PHYS-101 (4), MATH-101 (3), ENG-101 (3), ME-102 (3), CS-EL0 (3) = 20 credits.
+print("\n--- Test 6: Enrolling up to credit limit (20 cr) ---")
+for code in ['PHYS-101', 'MATH-101', 'ENG-101', 'ME-102', 'CS-EL0']:
     c_id = course_map[code]['course_id']
     res = session.post(f"{BASE_URL}/api/enrollments/register", json={"course_id": c_id})
     print(f"Enrolled in {code}: {res.status_code} - {res.json().get('message', res.json().get('error'))}")
 
 # Get status
 res = session.get(f"{BASE_URL}/api/enrollments/my-courses")
-print("Status after 4 courses:", res.json())
+print("Status after enrolling in Semester 1 courses:", res.json())
 
-# Now try PHYS-101 (4 credits) - should fail due to credit limit!
-print("\n--- Test 7: Exceeding credit limit (PHYS-101 - 4 credits) ---")
-phys_id = course_map['PHYS-101']['course_id']
-res = session.post(f"{BASE_URL}/api/enrollments/register", json={"course_id": phys_id})
-print(f"Status Code: {res.status_code}")
-print(res.json())
-assert res.status_code == 400, "Should block enrollment due to credit limit"
-
-# Try MATH-101 (3 credits) - should also fail (16 + 3 = 19 > 18)
-print("\n--- Test 8: Exceeding credit limit (MATH-101 - 3 credits) ---")
-math_id = course_map['MATH-101']['course_id']
-res = session.post(f"{BASE_URL}/api/enrollments/register", json={"course_id": math_id})
+# Now try PHYS-101L (1 credit) - should fail due to credit limit (exceeds 20)!
+print("\n--- Test 7: Exceeding credit limit (PHYS-101L - 1 credit) ---")
+phys101l_id = course_map['PHYS-101L']['course_id']
+res = session.post(f"{BASE_URL}/api/enrollments/register", json={"course_id": phys101l_id})
 print(f"Status Code: {res.status_code}")
 print(res.json())
 assert res.status_code == 400, "Should block enrollment due to credit limit"
@@ -120,6 +111,6 @@ assert res.status_code == 200, "Should successfully drop CS-101"
 # Check status
 res = session.get(f"{BASE_URL}/api/enrollments/my-courses")
 print("Status after drop:", res.json())
-assert res.json()['total_credits'] == 12, "Credits should decrease to 12"
+assert res.json()['total_credits'] == 16, "Credits should decrease to 16"
 
 print("\nAll automated backend checks completed successfully! The database constraints and transactional boundaries function exactly as designed.")
