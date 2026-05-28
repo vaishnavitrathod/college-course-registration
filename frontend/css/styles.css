@@ -1321,10 +1321,10 @@ body.light-theme {
     --bg-secondary: #ffffff;
     --bg-tertiary: #e4e7eb;
     
-    --accent: #4c51bf;
-    --accent-glow: rgba(76, 81, 191, 0.15);
-    --accent-gradient: linear-gradient(135deg, #4c51bf 0%, #7e57c2 100%);
-    --accent-light: rgba(76, 81, 191, 0.05);
+    --accent: #1d4ed8;
+    --accent-glow: rgba(29, 78, 216, 0.15);
+    --accent-gradient: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+    --accent-light: rgba(29, 78, 216, 0.05);
     
     --text-primary: #1a202c;
     --text-secondary: #4a5568;
@@ -1332,12 +1332,12 @@ body.light-theme {
     
     --glass-bg: rgba(255, 255, 255, 0.85);
     --glass-border: rgba(0, 0, 0, 0.08);
-    --glass-border-focus: rgba(76, 81, 191, 0.4);
+    --glass-border-focus: rgba(29, 78, 216, 0.4);
     
     --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.02);
     --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.05);
     --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.08);
-    --shadow-glow: 0 0 25px rgba(76, 81, 191, 0.06);
+    --shadow-glow: 0 0 25px rgba(29, 78, 216, 0.06);
     
     --bg-card: var(--bg-secondary);
     --text-color: var(--text-primary);
